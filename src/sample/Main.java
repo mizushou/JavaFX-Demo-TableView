@@ -3,23 +3,25 @@ package sample;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import java.util.Observable;
 
 public class Main extends Application {
 
     Stage window;
     TableView<Product> table;
+    TextField nameInput, priceInput, quantiryInput;
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         window = primaryStage;
         window.setTitle("JavaFX-Demo-TableView");
 
@@ -38,17 +40,60 @@ public class Main extends Application {
         quantityColumn.setMinWidth(100);
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 
+        //Name input
+        nameInput = new TextField();
+        nameInput.setPromptText("Name");
+
+        //Price input
+        priceInput = new TextField();
+        priceInput.setPromptText("Price");
+
+        //Quantity input
+        quantiryInput = new TextField();
+        quantiryInput.setPromptText("Quantity");
+
+        //Button
+        Button addButton = new Button("Add");
+        addButton.setOnAction(e -> addButtonClicked());
+        Button deleteButton = new Button("Delete");
+        deleteButton.setOnAction(e -> deleteButtonClicked());
+
+        HBox hBox = new HBox();
+        hBox.setPadding(new Insets(10, 10, 10, 10));
+        hBox.setSpacing(10);
+        hBox.getChildren().addAll(nameInput, priceInput, quantiryInput, addButton, deleteButton);
 
         table = new TableView<>();
         table.setItems(getProduct());
         table.getColumns().addAll(nameColumn, priceColumn, quantityColumn);
 
         VBox vBox = new VBox();
-        vBox.getChildren().addAll(table);
+        vBox.getChildren().addAll(table, hBox);
 
         Scene scene = new Scene(vBox);
         window.setScene(scene);
         window.show();
+    }
+
+    //Add button clicked
+    public void addButtonClicked() {
+        Product product = new Product();
+        product.setName(nameInput.getText());
+        product.setPrice(Double.parseDouble(priceInput.getText()));
+        product.setQuantity(Integer.parseInt(quantiryInput.getText()));
+        table.getItems().add(product);
+        nameInput.clear();
+        priceInput.clear();
+        quantiryInput.clear();
+    }
+
+    //Delete button clicked
+    public void deleteButtonClicked() {
+        ObservableList<Product> productSelected, allProducteds;
+        allProducteds = table.getItems();
+        productSelected = table.getSelectionModel().getSelectedItems();
+
+        productSelected.forEach(allProducteds::remove);
     }
 
 
