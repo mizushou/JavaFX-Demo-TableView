@@ -32,14 +32,17 @@ public class Main extends Application {
         nameColumn.setMinWidth(200);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        nameColumn.setOnEditCommit(
-                new EventHandler<TableColumn.CellEditEvent<Product, String>>() {
-                    @Override
-                    public void handle(TableColumn.CellEditEvent<Product, String> event) {
-                        ((Product) event.getTableView().getItems().get(event.getTablePosition().getRow())).setName(event.getNewValue());
-                    }
-                }
-        );
+        nameColumn.setOnEditCommit(e -> {
+            ((Product) e.getTableView().getItems().get(e.getTablePosition().getRow())).setName(e.getNewValue());
+        });
+//        nameColumn.setOnEditCommit(
+//                new EventHandler<TableColumn.CellEditEvent<Product, String>>() {
+//                    @Override
+//                    public void handle(TableColumn.CellEditEvent<Product, String> event) {
+//                        ((Product) event.getTableView().getItems().get(event.getTablePosition().getRow())).setName(event.getNewValue());
+//                    }
+//                }
+//        );
 
         //Price cloumn
         TableColumn<Product, Double> priceColumn = new TableColumn<>("Price"); // header
