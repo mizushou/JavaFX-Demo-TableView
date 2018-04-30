@@ -3,6 +3,7 @@ package sample;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,6 +11,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -18,7 +20,7 @@ public class Main extends Application {
 
     Stage window;
     TableView<Product> table;
-    TextField nameInput, priceInput, quantiryInput;
+    TextField nameInput, priceInput, quantityInput;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -29,6 +31,15 @@ public class Main extends Application {
         TableColumn<Product, String> nameColumn = new TableColumn<>("Name"); // header
         nameColumn.setMinWidth(200);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        nameColumn.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Product, String>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Product, String> event) {
+                        ((Product) event.getTableView().getItems().get(event.getTablePosition().getRow())).setName(event.getNewValue());
+                    }
+                }
+        );
 
         //Price cloumn
         TableColumn<Product, Double> priceColumn = new TableColumn<>("Price"); // header
@@ -49,8 +60,8 @@ public class Main extends Application {
         priceInput.setPromptText("Price");
 
         //Quantity input
-        quantiryInput = new TextField();
-        quantiryInput.setPromptText("Quantity");
+        quantityInput = new TextField();
+        quantityInput.setPromptText("Quantity");
 
         //Button
         Button addButton = new Button("Add");
@@ -61,9 +72,10 @@ public class Main extends Application {
         HBox hBox = new HBox();
         hBox.setPadding(new Insets(10, 10, 10, 10));
         hBox.setSpacing(10);
-        hBox.getChildren().addAll(nameInput, priceInput, quantiryInput, addButton, deleteButton);
+        hBox.getChildren().addAll(nameInput, priceInput, quantityInput, addButton, deleteButton);
 
         table = new TableView<>();
+        table.setEditable(true);
         table.setItems(getProduct());
         table.getColumns().addAll(nameColumn, priceColumn, quantityColumn);
 
@@ -80,11 +92,11 @@ public class Main extends Application {
         Product product = new Product();
         product.setName(nameInput.getText());
         product.setPrice(Double.parseDouble(priceInput.getText()));
-        product.setQuantity(Integer.parseInt(quantiryInput.getText()));
+        product.setQuantity(Integer.parseInt(quantityInput.getText()));
         table.getItems().add(product);
         nameInput.clear();
         priceInput.clear();
-        quantiryInput.clear();
+        quantityInput.clear();
     }
 
     //Delete button clicked
